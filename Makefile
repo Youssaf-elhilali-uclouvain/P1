@@ -1,5 +1,5 @@
 # --- Configuration Globale ---
-PROGS = philosophes lecteurs_ecrivains
+PROGS = philosophes lecteurs_ecrivains prod_cons
 SRC_DIR = src
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -O3 -pthread
@@ -24,6 +24,11 @@ philo_bench: philosophes
 	@echo "--- Lancement Évaluation Performance Philosophes ---"
 	scripts/run_tests_philo.sh
 
+.PHONY: test_perf
+test_perf: $(PROGS)
+	@echo "--- Lancement de TOUS les tests de performance (scripts/performance_scripts.sh) ---"
+	# Assurez-vous que le script a les droits d'exécution (U)
+	scripts/performance_scripts.sh
     
 # ----------------------------------------------------------------------
 # 3. Nettoyage
