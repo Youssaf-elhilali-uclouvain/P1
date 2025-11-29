@@ -56,34 +56,8 @@ plt.legend()
 plt.savefig('graphique_prod_cons.pdf')
 plt.close()
 
-# Graphique 4: spinlock TAS 
-plt.figure(figsize=(10,6))
-plt.errorbar(stats_spin.index, stats_spin['mean'], yerr=stats_spin['std'],
-             marker='o', capsize=5, capthick=2, label='Test-and-Set', color='blue')
-plt.xlabel('Nombre de threads')
-plt.ylabel("Temps d'exécution (s)")
-plt.title('Performance du verrou Test-and-Set')
-plt.ylim(bottom=0)
-plt.grid(True, alpha=0.3)
-plt.legend()
-plt.savefig('graphique_spinlock.pdf')
-plt.close()
 
-# Graphique 5: spinlock TTAS 
-
-plt.figure(figsize=(10,6))
-plt.errorbar(stats_ttas.index, stats_ttas['mean'], yerr=stats_ttas['std'],
-            marker='s', capsize=5, capthick=2, label='Test-and-Test-and-Set (TTAS)', color='green')
-plt.xlabel('Nombre de threads')
-plt.ylabel("Temps d'exécution (s)")
-plt.title('Performance du verrou Test-and-Test-and-Set (TTAS)')
-plt.ylim(bottom=0)
-plt.grid(True, alpha=0.3)
-plt.legend()
-plt.savefig('graphique_ttas.pdf')
-plt.close()
-
-# Graphique 6: comparaison TAS vs TTAS
+# Graphique 6: spinlock
 
 plt.figure(figsize=(10,6))
 plt.errorbar(stats_spin.index, stats_spin['mean'], yerr=stats_spin['std'],
@@ -99,5 +73,5 @@ plt.legend()
 plt.savefig('graphique_comparaison_tas_ttas.pdf')
 plt.close()
 
-print("7 graphiques générés avec succès!")
+print("5 graphiques générés avec succès!")
 
