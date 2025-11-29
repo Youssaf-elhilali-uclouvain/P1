@@ -1,5 +1,5 @@
 # --- Configuration Globale ---
-PROGS = philosophes lecteurs_ecrivains prod_cons test_spinlock
+PROGS = philosophes lecteurs_ecrivains prod_cons test_spinlock test_ttas
 SRC_DIR = src
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -O3 -pthread -Iinclude
@@ -20,9 +20,13 @@ lecteurs_ecrivains: $(SRC_DIR)/lecteurs_ecrivains.c
 prod_cons: $(SRC_DIR)/prod_cons.c
 	$(CC) $(CFLAGS) $< -o $@
 
-# --- Règle spécifique pour test_spinlock ---
+# --- Règle pour test_spinlock avec TAS (test-and-set simple) ---
 test_spinlock: $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/spinlock.c
 	$(CC) $(CFLAGS) $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/spinlock.c -o $@
+
+# --- Règle pour test_ttas avec TTAS (test-and-test-and-set) ---
+test_ttas: $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/ttas_spinlock.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/ttas_spinlock.c -o $@
 
 # ----------------------------------------------------------------------
 # 2. Cibles de Test
@@ -43,4 +47,4 @@ test_perf: $(PROGS)
 .PHONY: clean
 clean:
 	@echo "Nettoyage des exécutables..."
-	rm -f $(PROGS)
+	rm -f $(PROGS) test_ttas

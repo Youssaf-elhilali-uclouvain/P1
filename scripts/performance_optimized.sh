@@ -75,17 +75,33 @@ if [ -f "../prod_cons" ]; then
     }
 fi
 
-# Test 4: Spinlock Test-and-Set
+# Test 4: Spinlock Test-and-Set (TAS)
 if [ -f "../test_spinlock" ]; then
     EXEC_FILE="../test_spinlock"
     OUTPUT_FILE="../dataCSV/results_spinlock.csv"
 
     echo "N_Threads,Mesure,Temps_Execution_s" > $OUTPUT_FILE
 
-    for N in 2 4 8 16 32; do
+    for N in 1 2 4 8 16 32; do
         for ((i=1; i<=NB_MESURES; i++)); do
             RAW=$($EXEC_FILE $N 2>/dev/null)
-            TIME=$(echo "$RAW" | awk '{print $3}') # extrait la valeur x.xxx secondes
+            TIME=$(echo "$RAW" | awk -F',' '{print $2}' | xargs)
+            echo "$N,$i,$TIME" >> $OUTPUT_FILE
+        done
+    done
+fi
+
+# Test 5: Spinlock Test-and-Test-and-Set (TTAS)
+if [ -f "../test_ttas" ]; then
+    EXEC_FILE="../test_ttas"
+    OUTPUT_FILE="../dataCSV/results_ttas.csv"
+
+    echo "N_Threads,Mesure,Temps_Execution_s" > $OUTPUT_FILE
+
+    for N in 1 2 4 8 16 32; do
+        for ((i=1; i<=NB_MESURES; i++)); do
+            RAW=$($EXEC_FILE $N 2>/dev/null)
+            TIME=$(echo "$RAW" | awk -F',' '{print $2}' | xargs)
 
             echo "$N,$i,$TIME" >> $OUTPUT_FILE
         done
