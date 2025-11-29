@@ -47,4 +47,6 @@ test_perf: $(PROGS)
 .PHONY: clean
 clean:
 	@echo "Nettoyage des exécutables..."
-	rm -f $(PROGS) test_ttas
+	rm -f $(PROGS) 
+	rm -f dataCSV/.csv
+    rm -f graph/.pdf
