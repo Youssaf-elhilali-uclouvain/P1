@@ -1,23 +1,23 @@
 #include "spinlock.h"
 
-static inline int xchg(volatile int addr, int newval) {
+static inline int xchg(volatile int *addr, int newval) {
     int result;
-    asm volatile(
+    __asm__ volatile(
         "xchg %0, %1"
-        : "=r"(result), "+m"(addr)
+        : "=r"(result), "+m"(*addr)
         : "0"(newval)
         : "memory"
     );
     return result;
 }
 
-void lock(spinlock_t s) {
+void lock(spinlock_t *s) {
     while (xchg(&s->locked, 1) == 1) {
         // attente active
     }
 }
 
-void unlock(spinlock_ts) {
-    asm volatile("" ::: "memory");
+void unlock(spinlock_t *s) {
+    __asm__ volatile("" ::: "memory");
     s->locked = 0;
 }
