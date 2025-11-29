@@ -15,13 +15,12 @@ int buffer[BUFFER_SIZE];
 int in = 0;   // Index de la prochaine insertion (Producteur)
 int out = 0;  // Index de la prochaine extraction (Consommateur)
 
-// --- Primitives de Synchronisation ---
 pthread_mutex_t buffer_mutex;  // Exclusion mutuelle pour l'accès au buffer (in/out)
 sem_t empty;                   // Compte les places vides (initialisé à BUFFER_SIZE)
 sem_t full;                    // Compte les places pleines (initialisé à 0)
 
-// --- Variables de Suivi ---
 // Pour s'assurer que l'ensemble du travail est fait.
+
 int items_produced = 0;
 int items_consumed = 0;
 
@@ -115,7 +114,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Allocation des tableaux de threads
     pthread_t *prod_threads = malloc(num_producers * sizeof(pthread_t));
     pthread_t *cons_threads = malloc(num_consumers * sizeof(pthread_t));
     
@@ -124,7 +122,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // 1. Initialisation des primitives
     pthread_mutex_init(&buffer_mutex, NULL);
     // Le sémaphore 'empty' est initialisé à la taille du buffer (8)
     sem_init(&empty, 0, BUFFER_SIZE); 
@@ -134,17 +131,14 @@ int main(int argc, char *argv[]) {
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
-    // 2. Création des threads Producteurs
     for (long i = 0; i < num_producers; i++) {
         pthread_create(&prod_threads[i], NULL, producer, (void*)i);
     }
 
-    // 3. Création des threads Consommateurs
     for (long i = 0; i < num_consumers; i++) {
         pthread_create(&cons_threads[i], NULL, consumer, (void*)i);
     }
     
-    // 4. Attente de la fin des threads (Join)
     for (int i = 0; i < num_producers; i++) {
         pthread_join(prod_threads[i], NULL);
     }
@@ -154,7 +148,6 @@ int main(int argc, char *argv[]) {
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    // 5. Destruction et Nettoyage
     pthread_mutex_destroy(&buffer_mutex);
     sem_destroy(&empty);
     sem_destroy(&full);
