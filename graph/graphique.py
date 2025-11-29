@@ -7,11 +7,13 @@ import pandas as pd
 df_philo = pd.read_csv('../dataCSV/results_philosophes.csv')
 df_rw = pd.read_csv('../dataCSV/results_lecteurs_ecrivains.csv')
 df_pc = pd.read_csv('../dataCSV/results_prod_cons.csv')
+df_spin = pd.read_csv('../dataCSV/results_spinlock.csv')
 
 # Calculer moyenne et écart-type pour chaque nombre de threads
 stats_philo = df_philo.groupby('N_Threads')['Temps_Execution_s'].agg(['mean', 'std'])
 stats_rw = df_rw.groupby('N_Threads')['Temps_Execution_s'].agg(['mean', 'std'])
 stats_pc = df_pc.groupby('N_Threads')['Temps_Execution_s'].agg(['mean', 'std'])
+stats_spin = df_spin.groupby('N_Threads')['Temps_Execution_s'].agg(['mean','std'])
 
 # Graphique 1: Philosophes
 plt.figure(figsize=(10, 6))
@@ -52,4 +54,18 @@ plt.legend()
 plt.savefig('graphique_prod_cons.pdf')
 plt.close()
 
-print("3 graphiques générés avec succès!")
+# Graphique 4: verrou
+plt.figure(figsize=(10,6))
+plt.errorbar(stats_spin.index, stats_spin['mean'], yerr=stats_spin['std'],
+             marker='o', capsize=5, capthick=2, label='Test-and-Set')
+plt.xlabel('Nombre de threads')
+plt.ylabel("Temps d'exécution (s)")
+plt.title('Performance du verrou Test-and-Set')
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.savefig('graphique_spinlock.pdf')
+plt.close()
+
+
+
+print("4 graphiques générés avec succès!")

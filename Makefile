@@ -1,24 +1,32 @@
 # --- Configuration Globale ---
-PROGS = philosophes lecteurs_ecrivains prod_cons
+PROGS = philosophes lecteurs_ecrivains prod_cons test_spinlock
 SRC_DIR = src
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -O3 -pthread
+CFLAGS = -Wall -Wextra -std=c99 -O3 -pthread -Iinclude
 
 # ----------------------------------------------------------------------
-# 1. Cibles de Construction (all et règle générique)
+# 1. Cibles de Construction (all et règles spécifiques)
 # ----------------------------------------------------------------------
 .PHONY: all
 all: $(PROGS)
 
-# Règle générique de compilation : cible : dépendance
-$(PROGS): %: $(SRC_DIR)/%.c
+# --- Règles génériques pour philosophes, lecteurs_ecrivains, prod_cons ---
+philosophes: $(SRC_DIR)/philosophes.c
 	$(CC) $(CFLAGS) $< -o $@
 
-# ----------------------------------------------------------------------
-# 2. Cibles de Test (Ajouter les autres cibles ici plus tard)
-# ----------------------------------------------------------------------
+lecteurs_ecrivains: $(SRC_DIR)/lecteurs_ecrivains.c
+	$(CC) $(CFLAGS) $< -o $@
 
-# Cible pour l'évaluation de performance des Philosophes
+prod_cons: $(SRC_DIR)/prod_cons.c
+	$(CC) $(CFLAGS) $< -o $@
+
+# --- Règle spécifique pour test_spinlock ---
+test_spinlock: $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/spinlock.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/spinlock.c -o $@
+
+# ----------------------------------------------------------------------
+# 2. Cibles de Test
+# ----------------------------------------------------------------------
 .PHONY: philo_bench
 philo_bench: philosophes
 	@echo "--- Lancement Évaluation Performance Philosophes ---"
@@ -26,10 +34,9 @@ philo_bench: philosophes
 
 .PHONY: test_perf
 test_perf: $(PROGS)
-	@echo "--- Lancement de TOUS les tests de performance (scripts/performance_scripts.sh) ---"
-	# Assurez-vous que le script a les droits d'exécution (U)
-	scripts/performance_scripts.sh
-    
+	@echo "--- Lancement de TOUS les tests de performance ---"
+	scripts/performance_optimized.sh
+
 # ----------------------------------------------------------------------
 # 3. Nettoyage
 # ----------------------------------------------------------------------
