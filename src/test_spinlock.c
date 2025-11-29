@@ -3,10 +3,10 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "spinlock.h"  // ton verrou test-and-set
+#include "spinlock.h"  
 
 #define TOTAL_CRIT_SECTIONS 32768
-#define DELAY 1000       // boucle vide de la section critique
+#define DELAY 1000       // pour boucle
 
 spinlock_t spin;
 
@@ -14,13 +14,12 @@ void *worker(void *arg) {
     int iterations = *(int*)arg;
 
     for (int i = 0; i < iterations; i++) {
-        lock(&spin);   // fonction du .h
+        lock(&spin);  
 
-        // --- SECTION CRITIQUE ---
+        // section critique
         for (volatile int j = 0; j < DELAY; j++);
-        // ------------------------
 
-        unlock(&spin); // fonction du .h
+        unlock(&spin); 
     }
 
     return NULL;
