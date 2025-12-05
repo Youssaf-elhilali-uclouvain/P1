@@ -49,4 +49,4 @@ clean:
 	@echo "Nettoyage des exécutables..."
 	rm -f $(PROGS) 
 	rm -f dataCSV/.csv
-    rm -f graph/.pdf
+	rm -f graph/.pdf
