@@ -11,9 +11,17 @@ static inline int xchg(volatile int *addr, int newval) {
     return result;
 }
 
-void lock(spinlock_t *s) {
-    while (xchg(&s->locked, 1) == 1) {
-        // attente active
+void lock(spinlock_t *s){
+    while (1) {
+       
+        int previous = xchg(&s->locked, 1);
+ 
+        if (previous == 0) {
+            // On sort de la boucle, on a le verrou
+            break;
+        }
+        
+        // Sinon on continue la boucle pour réessayer
     }
 }
 

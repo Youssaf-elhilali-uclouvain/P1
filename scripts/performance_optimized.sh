@@ -107,3 +107,69 @@ if [ -f "../test_ttas" ]; then
         done
     done
 fi
+
+# Test 6: Philosophes avec attente active (Tâche 2.5)
+if [ -f "../philosophes_spinlock" ]; then
+    EXEC_FILE="../philosophes_spinlock"
+    OUTPUT_FILE="../dataCSV/results_philosophes_spinlock.csv"
+
+    echo "N_Threads,Mesure,Temps_Execution_s" > $OUTPUT_FILE
+    
+    for N in $THREAD_COUNTS; {
+        for ((i=1; i<=NB_MESURES; i++)); {
+            TIME=$($EXEC_FILE $N 2>/dev/null)
+            
+            if [ $? -eq 0 ]; then
+                echo "$N,$i,$TIME" >> $OUTPUT_FILE
+            else
+                echo "$N,$i,ERREUR" >> $OUTPUT_FILE
+            fi
+        }
+    }
+fi
+
+# Test 7: Lecteurs/Écrivains avec attente active (Tâche 2.5)
+if [ -f "../lecteurs_ecrivains_spinlock" ]; then
+    EXEC_FILE="../lecteurs_ecrivains_spinlock"
+    OUTPUT_FILE="../dataCSV/results_lecteurs_ecrivains_spinlock.csv"
+    
+    echo "N_Threads,N_Lecteurs,N_Ecrivains,Mesure,Temps_Execution_s" > $OUTPUT_FILE
+    
+    for N_TOTAL in $THREAD_COUNTS; {
+        N_LECTEURS=$((N_TOTAL / 2))
+        N_ECRIVAINS=$((N_TOTAL / 2))
+        
+        for ((i=1; i<=NB_MESURES; i++)); {
+            TIME=$($EXEC_FILE $N_LECTEURS $N_ECRIVAINS 2>/dev/null)
+            
+            if [ $? -eq 0 ]; then
+                echo "$N_TOTAL,$N_LECTEURS,$N_ECRIVAINS,$i,$TIME" >> $OUTPUT_FILE
+            else
+                echo "$N_TOTAL,$N_LECTEURS,$N_ECRIVAINS,$i,ERREUR" >> $OUTPUT_FILE
+            fi
+        }
+    }
+fi
+
+# Test 8: Producteurs/Consommateurs avec attente active (Tâche 2.5)
+if [ -f "../prod_cons_spinlock" ]; then
+    EXEC_FILE="../prod_cons_spinlock"
+    OUTPUT_FILE="../dataCSV/results_prod_cons_spinlock.csv"
+    
+    echo "N_Threads,N_Producteurs,N_Consommateurs,Mesure,Temps_Execution_s" > $OUTPUT_FILE
+    
+    for N_TOTAL in $THREAD_COUNTS; {
+        N_PROD=$((N_TOTAL / 2))
+        N_CONS=$((N_TOTAL / 2))
+        
+        for ((i=1; i<=NB_MESURES; i++)); {
+            TIME=$($EXEC_FILE $N_PROD $N_CONS 2>/dev/null)
+            
+            if [ $? -eq 0 ]; then
+                echo "$N_TOTAL,$N_PROD,$N_CONS,$i,$TIME" >> $OUTPUT_FILE
+            else
+                echo "$N_TOTAL,$N_PROD,$N_CONS,$i,ERREUR" >> $OUTPUT_FILE
+            fi
+        }
+    }
+fi

@@ -1,19 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <semaphore.h>
 #include <time.h>
+#include "my_semaphore.h"
+#include "spinlock.h"
 
 #define BUFFER_SIZE 8
 
 int buffer[BUFFER_SIZE];
 int in = 0;
 int out = 0;
-pthread_mutex_t mutex;
-sem_t empty;
-sem_t full;
-int items_produced = 0;
-int items_consumed = 0;
+spinlock_t mutex;
+my_semaphore_t empty;
+my_semaphore_t full;
 int N_PROD;
 int N_CONS;
 
@@ -25,37 +24,38 @@ void* producteur(void* arg) {
         // traitement
         for (int j = 0; j < 10000; j++);
 
-        sem_wait(&empty);
-        pthread_mutex_lock(&mutex);
+        my_sem_wait(&empty);
+        lock(&mutex);
 
         buffer[in] = (int)id;
         in = (in + 1) % BUFFER_SIZE;
 
-        pthread_mutex_unlock(&mutex);
-        sem_post(&full);
+        unlock(&mutex);
+        my_sem_post(&full);
     }
     return NULL;
 }
 
-void* consommateur() {
+void* consommateur(void* arg) {
+    (void)arg;
     int nb = 131072 / N_CONS;
     
     for (int i = 0; i < nb; i++) {
-        sem_wait(&full);
-        pthread_mutex_lock(&mutex);
+        my_sem_wait(&full);
+        lock(&mutex);
 
-        buffer[out];
+        int item = buffer[out];
+        (void)item;
         out = (out + 1) % BUFFER_SIZE;
 
-        pthread_mutex_unlock(&mutex);
-        sem_post(&empty);
+        unlock(&mutex);
+        my_sem_post(&empty);
 
         // traitement
         for (int j = 0; j < 10000; j++);
     }
     return NULL;
 }
-
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -69,11 +69,12 @@ int main(int argc, char *argv[]) {
     pthread_t *prod = malloc(N_PROD * sizeof(pthread_t));
     pthread_t *cons = malloc(N_CONS * sizeof(pthread_t));
 
-    pthread_mutex_init(&mutex, NULL);
-    sem_init(&empty, 0, BUFFER_SIZE);
-    sem_init(&full, 0, 0);
+    // init
+    mutex.locked = 0;
+    my_sem_init(&empty, BUFFER_SIZE);
+    my_sem_init(&full, 0);
 
-    struct timespec debut,fin;
+    struct timespec debut, fin;
     clock_gettime(CLOCK_MONOTONIC, &debut);
 
     for (long i = 0; i < N_PROD; i++) {
@@ -94,14 +95,11 @@ int main(int argc, char *argv[]) {
 
     clock_gettime(CLOCK_MONOTONIC, &fin);
 
-    pthread_mutex_destroy(&mutex);
-    sem_destroy(&empty);
-    sem_destroy(&full);
     free(prod);
     free(cons);
 
-    double temps = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
-    printf("%.6f\n", temps);
+    double elapsed_sec = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
+    printf("%.6f\n", elapsed_sec);
 
     return 0;
 }

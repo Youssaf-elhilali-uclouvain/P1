@@ -1,5 +1,5 @@
 # --- Configuration Globale ---
-PROGS = philosophes lecteurs_ecrivains prod_cons test_spinlock test_ttas
+PROGS = philosophes lecteurs_ecrivains prod_cons test_spinlock test_ttas philosophes_spinlock prod_cons_spinlock lecteurs_ecrivains_spinlock
 SRC_DIR = src
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -O3 -pthread -Iinclude
@@ -28,6 +28,16 @@ test_spinlock: $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/spinlock.c
 test_ttas: $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/ttas_spinlock.c
 	$(CC) $(CFLAGS) $(SRC_DIR)/test_spinlock.c $(SRC_DIR)/ttas_spinlock.c -o $@
 
+# --- Règles pour versions avec primitives d'attente active (Tâche 2.5) ---
+philosophes_spinlock: $(SRC_DIR)/philosophes_spinlock.c $(SRC_DIR)/my_semaphore.c $(SRC_DIR)/ttas_spinlock.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/philosophes_spinlock.c $(SRC_DIR)/my_semaphore.c $(SRC_DIR)/ttas_spinlock.c -o $@
+
+prod_cons_spinlock: $(SRC_DIR)/prod_cons_spinlock.c $(SRC_DIR)/my_semaphore.c $(SRC_DIR)/ttas_spinlock.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/prod_cons_spinlock.c $(SRC_DIR)/my_semaphore.c $(SRC_DIR)/ttas_spinlock.c -o $@
+
+lecteurs_ecrivains_spinlock: $(SRC_DIR)/lecteurs_ecrivains_spinlock.c $(SRC_DIR)/my_semaphore.c $(SRC_DIR)/ttas_spinlock.c
+	$(CC) $(CFLAGS) $(SRC_DIR)/lecteurs_ecrivains_spinlock.c $(SRC_DIR)/my_semaphore.c $(SRC_DIR)/ttas_spinlock.c -o $@
+
 # ----------------------------------------------------------------------
 # 2. Cibles de Test
 # ----------------------------------------------------------------------
@@ -47,6 +57,7 @@ test_perf: $(PROGS)
 .PHONY: clean
 clean:
 	@echo "Nettoyage des exécutables..."
-	rm -f $(PROGS) 
-	rm -f dataCSV/.csv
-    rm -f graph/.pdf
+	rm -f $(PROGS)
+	rm -f philosophes_spinlock prod_cons_spinlock lecteurs_ecrivains_spinlock
+	rm -f dataCSV/*.csv
+	rm -f graph/*.pdf

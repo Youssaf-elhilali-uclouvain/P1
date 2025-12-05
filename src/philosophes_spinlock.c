@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include "my_semaphore.h"
 
-pthread_mutex_t *forks;
+my_semaphore_t *forks;
 int N_PHILOSOPHES;
 
 void* philosophe_action(void* arg) {
@@ -16,18 +17,18 @@ void* philosophe_action(void* arg) {
         
         // prendre fourchettes
         if (id == N_PHILOSOPHES - 1) {
-            pthread_mutex_lock(&forks[right]);
-            pthread_mutex_lock(&forks[left]);
+            my_sem_wait(&forks[right]);
+            my_sem_wait(&forks[left]);
         } else {
-            pthread_mutex_lock(&forks[left]);
-            pthread_mutex_lock(&forks[right]);
+            my_sem_wait(&forks[left]);
+            my_sem_wait(&forks[right]);
         }
 
         // manger
 
         // poser fourchettes
-        pthread_mutex_unlock(&forks[left]);
-        pthread_mutex_unlock(&forks[right]);
+        my_sem_post(&forks[left]);
+        my_sem_post(&forks[right]);
     }
     return NULL;
 }
@@ -40,13 +41,14 @@ int main(int argc, char *argv[]) {
 
     N_PHILOSOPHES = atoi(argv[1]);
     pthread_t *threads = malloc(N_PHILOSOPHES * sizeof(pthread_t));
-    forks = malloc(N_PHILOSOPHES * sizeof(pthread_mutex_t));
+    forks = malloc(N_PHILOSOPHES * sizeof(my_semaphore_t));
 
+    // init
     for (int i = 0; i < N_PHILOSOPHES; i++) {
-        pthread_mutex_init(&forks[i], NULL);
+        my_sem_init(&forks[i], 1);
     }
 
-    struct timespec debut,fin;
+    struct timespec debut, fin;
     clock_gettime(CLOCK_MONOTONIC, &debut);
 
     for (long i = 0; i < N_PHILOSOPHES; i++) {
@@ -59,15 +61,11 @@ int main(int argc, char *argv[]) {
 
     clock_gettime(CLOCK_MONOTONIC, &fin);
 
-    for (int i = 0; i < N_PHILOSOPHES; i++) {
-        pthread_mutex_destroy(&forks[i]);
-    }
-
     free(threads);
     free(forks);
 
-    double temps = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
-    printf("%.6f\n", temps);
+    double elapsed_sec = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
+    printf("%.6f\n", elapsed_sec);
 
     return 0;
 }

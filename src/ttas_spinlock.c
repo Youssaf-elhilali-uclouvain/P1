@@ -1,6 +1,6 @@
 #include "spinlock.h"
 
-static inline int xchg(volatile int *addr, int newval) {
+static inline int xchg(volatile int *addr, int newval){
     int result;
     __asm__ volatile(
         "xchg %0, %1"
@@ -11,26 +11,20 @@ static inline int xchg(volatile int *addr, int newval) {
     return result;
 }
 
-// test-and-test-and-set (TTAS)
-void lock(spinlock_t *s) {
+void lock(spinlock_t *s){
     while (1) {
-        // Premier test : lecture simple 
-        // Boucle tant que le verrou est occupé
+        // test 1
         while (s->locked == 1) {
-            // Attente 
         }
 
-        // Deuxième test-and-set : opération atomique
+        // test 2
         if (xchg(&s->locked, 1) == 0) {
-            // On a le verrou
             break;
         }
-        // retour à la première étape
     }
 }
 
-void unlock(spinlock_t *s) {
-    // Barrière mémoire pour éviter la réorganisation des instructions
+void unlock(spinlock_t *s){
     __asm__ volatile("" ::: "memory");
     s->locked = 0;
 }
