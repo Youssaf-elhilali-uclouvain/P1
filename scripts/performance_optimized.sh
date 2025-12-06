@@ -14,8 +14,8 @@ if [ -f "../philosophes" ]; then
 
     echo "N_Threads,Mesure,Temps_Execution_s" > $OUTPUT_FILE
     
-    for N in $THREAD_COUNTS; {
-        for ((i=1; i<=NB_MESURES; i++)); {
+    for N in $THREAD_COUNTS; do
+        for ((i=1; i<=NB_MESURES; i++)); do
             TIME=$($EXEC_FILE $N 2>/dev/null)
             
             if [ $? -eq 0 ]; then
@@ -23,8 +23,8 @@ if [ -f "../philosophes" ]; then
             else
                 echo "$N,$i,ERREUR" >> $OUTPUT_FILE
             fi
-        }
-    }
+        done
+    done
 fi
 
 # Test 2: Lecteurs/Écrivains
@@ -35,11 +35,11 @@ if [ -f "../lecteurs_ecrivains" ]; then
     
     echo "N_Threads,N_Lecteurs,N_Ecrivains,Mesure,Temps_Execution_s" > $OUTPUT_FILE
     
-    for N_TOTAL in $THREAD_COUNTS; {
+    for N_TOTAL in $THREAD_COUNTS; do
         N_LECTEURS=$((N_TOTAL / 2))
         N_ECRIVAINS=$((N_TOTAL / 2))
         
-        for ((i=1; i<=NB_MESURES; i++)); {
+        for ((i=1; i<=NB_MESURES; i++)); do
             TIME=$($EXEC_FILE $N_LECTEURS $N_ECRIVAINS 2>/dev/null)
             
             if [ $? -eq 0 ]; then
@@ -47,8 +47,8 @@ if [ -f "../lecteurs_ecrivains" ]; then
             else
                 echo "$N_TOTAL,$N_LECTEURS,$N_ECRIVAINS,$i,ERREUR" >> $OUTPUT_FILE
             fi
-        }
-    }
+        done
+    done
 fi
 
 # Test 3: Producteurs/Consommateurs
@@ -59,11 +59,11 @@ if [ -f "../prod_cons" ]; then
     
     echo "N_Threads,N_Producteurs,N_Consommateurs,Mesure,Temps_Execution_s" > $OUTPUT_FILE
     
-    for N_TOTAL in $THREAD_COUNTS; {
+    for N_TOTAL in $THREAD_COUNTS; do
         N_PROD=$((N_TOTAL / 2))
         N_CONS=$((N_TOTAL / 2))
         
-        for ((i=1; i<=NB_MESURES; i++)); {
+        for ((i=1; i<=NB_MESURES; i++)); do
             TIME=$($EXEC_FILE $N_PROD $N_CONS 2>/dev/null)
             
             if [ $? -eq 0 ]; then
@@ -71,8 +71,8 @@ if [ -f "../prod_cons" ]; then
             else
                 echo "$N_TOTAL,$N_PROD,$N_CONS,$i,ERREUR" >> $OUTPUT_FILE
             fi
-        }
-    }
+        done
+    done
 fi
 
 # Test 4: Spinlock Test-and-Set (TAS)
@@ -115,8 +115,8 @@ if [ -f "../philosophes_spinlock" ]; then
 
     echo "N_Threads,Mesure,Temps_Execution_s" > $OUTPUT_FILE
     
-    for N in $THREAD_COUNTS; {
-        for ((i=1; i<=NB_MESURES; i++)); {
+    for N in $THREAD_COUNTS; do
+        for ((i=1; i<=NB_MESURES; i++)); do
             TIME=$($EXEC_FILE $N 2>/dev/null)
             
             if [ $? -eq 0 ]; then
@@ -124,8 +124,8 @@ if [ -f "../philosophes_spinlock" ]; then
             else
                 echo "$N,$i,ERREUR" >> $OUTPUT_FILE
             fi
-        }
-    }
+        done
+    done
 fi
 
 # Test 7: Lecteurs/Écrivains avec attente active (Tâche 2.5)
@@ -135,11 +135,11 @@ if [ -f "../lecteurs_ecrivains_spinlock" ]; then
     
     echo "N_Threads,N_Lecteurs,N_Ecrivains,Mesure,Temps_Execution_s" > $OUTPUT_FILE
     
-    for N_TOTAL in $THREAD_COUNTS; {
+    for N_TOTAL in $THREAD_COUNTS; do
         N_LECTEURS=$((N_TOTAL / 2))
         N_ECRIVAINS=$((N_TOTAL / 2))
         
-        for ((i=1; i<=NB_MESURES; i++)); {
+        for ((i=1; i<=NB_MESURES; i++)); do
             TIME=$($EXEC_FILE $N_LECTEURS $N_ECRIVAINS 2>/dev/null)
             
             if [ $? -eq 0 ]; then
@@ -147,8 +147,8 @@ if [ -f "../lecteurs_ecrivains_spinlock" ]; then
             else
                 echo "$N_TOTAL,$N_LECTEURS,$N_ECRIVAINS,$i,ERREUR" >> $OUTPUT_FILE
             fi
-        }
-    }
+        done
+    done
 fi
 
 # Test 8: Producteurs/Consommateurs avec attente active (Tâche 2.5)
@@ -158,11 +158,11 @@ if [ -f "../prod_cons_spinlock" ]; then
     
     echo "N_Threads,N_Producteurs,N_Consommateurs,Mesure,Temps_Execution_s" > $OUTPUT_FILE
     
-    for N_TOTAL in $THREAD_COUNTS; {
+    for N_TOTAL in $THREAD_COUNTS; do
         N_PROD=$((N_TOTAL / 2))
         N_CONS=$((N_TOTAL / 2))
         
-        for ((i=1; i<=NB_MESURES; i++)); {
+        for ((i=1; i<=NB_MESURES; i++)); do
             TIME=$($EXEC_FILE $N_PROD $N_CONS 2>/dev/null)
             
             if [ $? -eq 0 ]; then
@@ -170,6 +170,6 @@ if [ -f "../prod_cons_spinlock" ]; then
             else
                 echo "$N_TOTAL,$N_PROD,$N_CONS,$i,ERREUR" >> $OUTPUT_FILE
             fi
-        }
-    }
+        done
+    done
 fi
