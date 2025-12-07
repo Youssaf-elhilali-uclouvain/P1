@@ -6,7 +6,7 @@
 
 pthread_mutex_t mutex;
 sem_t db;
-int readcount = 0;
+int nb_lectures = 0;
 int N_LECTEURS;
 int N_ECRIVAINS;
 
@@ -15,8 +15,8 @@ void* lecteur() {
     
     for (int i = 0; i < nb; i++) {
         pthread_mutex_lock(&mutex);
-        readcount++;
-        if (readcount == 1) {
+        nb_lectures++;
+        if (nb_lectures == 1) {
             sem_wait(&db);
         }
         pthread_mutex_unlock(&mutex);
@@ -25,8 +25,8 @@ void* lecteur() {
         for (int j = 0; j < 10000; j++);
 
         pthread_mutex_lock(&mutex);
-        readcount--;
-        if (readcount == 0) {
+        nb_lectures--;
+        if (nb_lectures == 0) {
             sem_post(&db);
         }
         pthread_mutex_unlock(&mutex);

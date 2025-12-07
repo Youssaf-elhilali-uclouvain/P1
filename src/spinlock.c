@@ -1,11 +1,11 @@
 #include "spinlock.h"
 
-static inline int xchg(volatile int *addr, int newval) {
+static inline int xchg(volatile int *addr, int new_val) {
     int result;
     __asm__ volatile(
         "xchg %0, %1"
         : "=r"(result), "+m"(*addr)
-        : "0"(newval)
+        : "0"(new_val)
         : "memory"
     );
     return result;
