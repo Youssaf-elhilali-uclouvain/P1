@@ -11,13 +11,11 @@ void my_sem_init(my_semaphore_t *sem, int value){
 void my_sem_wait(my_semaphore_t *sem){
     while (1) {
         lock(&sem->lock);
-        
         if (sem->value > 0) {
             sem->value--;
             unlock(&sem->lock);
             break;
         }
-
         unlock(&sem->lock);
     }
 }

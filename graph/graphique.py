@@ -75,7 +75,7 @@ plt.savefig('graphique_prod_cons.pdf')
 plt.close()
 
 
-# Graphique 6: spinlock
+# Graphique 4: spinlock comparaison
 
 plt.figure(figsize=(10,6))
 plt.errorbar(stats_spin.index, stats_spin['mean'], yerr=stats_spin['std'],

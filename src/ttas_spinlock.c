@@ -16,7 +16,6 @@ void lock(spinlock_t *s){
         // test 1
         while (s->locked == 1) {
         }
-
         // test 2
         if (xchg(&s->locked, 1) == 0) {
             break;

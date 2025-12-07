@@ -7,7 +7,7 @@
 
 spinlock_t mutex;
 my_semaphore_t db;
-int readcount = 0;
+int nb_lectures = 0;
 int N_LECTEURS;
 int N_ECRIVAINS;
 
@@ -17,8 +17,8 @@ void* lecteur(void* arg) {
     
     for (int i = 0; i < nb; i++) {
         lock(&mutex);
-        readcount++;
-        if (readcount == 1) {
+        nb_lectures++;
+        if (nb_lectures == 1) {
             my_sem_wait(&db);
         }
         unlock(&mutex);
@@ -27,8 +27,8 @@ void* lecteur(void* arg) {
         for (int j = 0; j < 10000; j++);
 
         lock(&mutex);
-        readcount--;
-        if (readcount == 0) {
+        nb_lectures--;
+        if (nb_lectures == 0) {
             my_sem_post(&db);
         }
         unlock(&mutex);
@@ -89,12 +89,10 @@ int main(int argc, char *argv[]) {
     }
 
     clock_gettime(CLOCK_MONOTONIC, &fin);
-
     free(threads_lect);
     free(threads_ecr);
-
-    double elapsed_sec = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
-    printf("%.6f\n", elapsed_sec);
+    double time = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1000000000.0;
+    printf("%.6f\n", time);
 
     return 0;
 }

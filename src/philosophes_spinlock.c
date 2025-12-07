@@ -4,7 +4,7 @@
 #include <time.h>
 #include "my_semaphore.h"
 
-my_semaphore_t *forks;
+my_semaphore_t *sem;
 int N_PHILOSOPHES;
 
 void* philosophe_action(void* arg) {
@@ -17,18 +17,18 @@ void* philosophe_action(void* arg) {
         
         // prendre fourchettes
         if (id == N_PHILOSOPHES - 1) {
-            my_sem_wait(&forks[right]);
-            my_sem_wait(&forks[left]);
+            my_sem_wait(&sem[right]);
+            my_sem_wait(&sem[left]);
         } else {
-            my_sem_wait(&forks[left]);
-            my_sem_wait(&forks[right]);
+            my_sem_wait(&sem[left]);
+            my_sem_wait(&sem[right]);
         }
 
         // manger
 
         // poser fourchettes
-        my_sem_post(&forks[left]);
-        my_sem_post(&forks[right]);
+        my_sem_post(&sem[left]);
+        my_sem_post(&sem[right]);
     }
     return NULL;
 }
@@ -41,11 +41,11 @@ int main(int argc, char *argv[]) {
 
     N_PHILOSOPHES = atoi(argv[1]);
     pthread_t *threads = malloc(N_PHILOSOPHES * sizeof(pthread_t));
-    forks = malloc(N_PHILOSOPHES * sizeof(my_semaphore_t));
+    sem = malloc(N_PHILOSOPHES * sizeof(my_semaphore_t));
 
     // init
     for (int i = 0; i < N_PHILOSOPHES; i++) {
-        my_sem_init(&forks[i], 1);
+        my_sem_init(&sem[i], 1);
     }
 
     struct timespec debut, fin;
@@ -60,12 +60,10 @@ int main(int argc, char *argv[]) {
     }
 
     clock_gettime(CLOCK_MONOTONIC, &fin);
-
     free(threads);
-    free(forks);
-
-    double elapsed_sec = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
-    printf("%.6f\n", elapsed_sec);
+    free(sem);
+    double time = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1000000000.0;
+    printf("%.6f\n", time);
 
     return 0;
 }

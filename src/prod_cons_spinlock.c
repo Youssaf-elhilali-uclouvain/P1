@@ -62,10 +62,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Usage: %s <N_Producteurs> <N_Consommateurs>\n", argv[0]);
         return 1;
     }
-
     N_PROD = atoi(argv[1]);
     N_CONS = atoi(argv[2]);
-
     pthread_t *prod = malloc(N_PROD * sizeof(pthread_t));
     pthread_t *cons = malloc(N_CONS * sizeof(pthread_t));
 
@@ -98,8 +96,8 @@ int main(int argc, char *argv[]) {
     free(prod);
     free(cons);
 
-    double elapsed_sec = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
-    printf("%.6f\n", elapsed_sec);
+    double time = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1000000000.0;
+    printf("%.6f\n", time);
 
     return 0;
 }
