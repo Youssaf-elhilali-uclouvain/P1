@@ -41,11 +41,6 @@ lecteurs_ecrivains_spinlock: $(SRC_DIR)/lecteurs_ecrivains_spinlock.c $(SRC_DIR)
 # ----------------------------------------------------------------------
 # 2. Cibles de Test
 # ----------------------------------------------------------------------
-.PHONY: philo_bench
-philo_bench: philosophes
-	@echo "--- Lancement Évaluation Performance Philosophes ---"
-	scripts/run_tests_philo.sh
-
 .PHONY: test_perf
 test_perf: $(PROGS)
 	@echo "--- Lancement de TOUS les tests de performance ---"

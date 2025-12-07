@@ -21,7 +21,7 @@ void lock(spinlock_t *s){
             break;
         }
         
-        // Sinon on continue la boucle pour réessayer
+        // si rien, alors on continue dans la boucle
     }
 }
 

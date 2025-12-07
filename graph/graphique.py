@@ -92,4 +92,3 @@ plt.savefig('graphique_comparaison_tas_ttas.pdf')
 plt.close()
 
 print("5 graphiques générés avec succès!")
-

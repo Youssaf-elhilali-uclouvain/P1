@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     free(threads);
     free(forks);
 
+    //on affiche le temps entre le début et la fin
     double temps = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
     printf("%.6f\n", temps);
 

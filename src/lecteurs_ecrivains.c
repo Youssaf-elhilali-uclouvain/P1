@@ -7,12 +7,12 @@
 pthread_mutex_t mutex;
 sem_t db;
 int nb_lectures = 0;
-int N_LECTEURS;
-int N_ECRIVAINS;
+int Nbre_lecteurs;
+int Nbre_ecrivains;
 
 void* lecteur() {
-    int nb = 25600 / N_LECTEURS;
-    
+    int nb = 25600 / Nbre_lecteurs;
+
     for (int i = 0; i < nb; i++) {
         pthread_mutex_lock(&mutex);
         nb_lectures++;
@@ -21,7 +21,7 @@ void* lecteur() {
         }
         pthread_mutex_unlock(&mutex);
 
-        // lecture
+        // on lit
         for (int j = 0; j < 10000; j++);
 
         pthread_mutex_lock(&mutex);
@@ -36,12 +36,12 @@ void* lecteur() {
 }
 
 void* ecrivain() {
-    int nb = 6400 / N_ECRIVAINS;
+    int nb = 6400 / Nbre_ecrivains;
     
     for (int i = 0; i < nb; i++) {
         sem_wait(&db);
 
-        // ecriture
+        // on écrit
         for (int j = 0; j < 10000; j++);
 
         sem_post(&db);
@@ -52,15 +52,15 @@ void* ecrivain() {
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        fprintf(stderr, "Usage: %s <N_Lecteurs> <N_Ecrivains>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <Nbre_lecteurs> <Nbre_ecrivains>\n", argv[0]);
         return 1;
     }
 
-    N_LECTEURS = atoi(argv[1]);
-    N_ECRIVAINS = atoi(argv[2]);
+    Nbre_lecteurs = atoi(argv[1]);
+    Nbre_ecrivains = atoi(argv[2]);
 
-    pthread_t *threads_lect = malloc(N_LECTEURS * sizeof(pthread_t));
-    pthread_t *threads_ecr = malloc(N_ECRIVAINS * sizeof(pthread_t));
+    pthread_t *threads_lect = malloc(Nbre_lecteurs * sizeof(pthread_t));
+    pthread_t *threads_ecr = malloc(Nbre_ecrivains * sizeof(pthread_t));
 
     pthread_mutex_init(&mutex, NULL);
     sem_init(&db, 0, 1);
@@ -68,19 +68,19 @@ int main(int argc, char *argv[]) {
     struct timespec debut,fin;
     clock_gettime(CLOCK_MONOTONIC, &debut);
 
-    for (long i = 0; i < N_LECTEURS; i++) {
+    for (long i = 0; i < Nbre_lecteurs; i++) {
         pthread_create(&threads_lect[i], NULL, lecteur, (void*)i);
     }
 
-    for (long i = 0; i < N_ECRIVAINS; i++) {
+    for (long i = 0; i < Nbre_ecrivains; i++) {
         pthread_create(&threads_ecr[i], NULL, ecrivain, (void*)i);
     }
 
-    for (int i = 0; i < N_LECTEURS; i++) {
+    for (int i = 0; i < Nbre_lecteurs; i++) {
         pthread_join(threads_lect[i], NULL);
     }
 
-    for (int i = 0; i < N_ECRIVAINS; i++) {
+    for (int i = 0; i < Nbre_ecrivains; i++) {
         pthread_join(threads_ecr[i], NULL);
     }
 

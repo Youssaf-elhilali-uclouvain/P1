@@ -1,0 +1,14 @@
+# Ignore generated CSV data and graph output
+/dataCSV/*.csv
+/graph/*.pdf
+/graph/*.png
+/graph/*.svg
+
+# Keep Python artifacts and editor/temp files
+__pycache__/
+*.pyc
+*.pyo
+*.swp
+
+# OS files
+.DS_Store

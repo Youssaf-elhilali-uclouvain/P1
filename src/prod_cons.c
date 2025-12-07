@@ -14,12 +14,12 @@ sem_t empty;
 sem_t full;
 int items_produced = 0;
 int items_consumed = 0;
-int N_PROD;
-int N_CONS;
+int Nbre_prod;
+int Nbre_cons;
 
 void* producteur(void* arg) {
     long id = (long)arg;
-    int nb = 131072 / N_PROD;
+    int nb = 131072 / Nbre_prod;
     
     for (int i = 0; i < nb; i++) {
         // traitement
@@ -38,7 +38,7 @@ void* producteur(void* arg) {
 }
 
 void* consommateur() {
-    int nb = 131072 / N_CONS;
+    int nb = 131072 / Nbre_cons;
     
     for (int i = 0; i < nb; i++) {
         sem_wait(&full);
@@ -59,15 +59,15 @@ void* consommateur() {
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        fprintf(stderr, "Usage: %s <N_Producteurs> <N_Consommateurs>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <Nbre_producteurs> <Nbre_consommateurs>\n", argv[0]);
         return 1;
     }
 
-    N_PROD = atoi(argv[1]);
-    N_CONS = atoi(argv[2]);
+    Nbre_prod = atoi(argv[1]);
+    Nbre_cons = atoi(argv[2]);
 
-    pthread_t *prod = malloc(N_PROD * sizeof(pthread_t));
-    pthread_t *cons = malloc(N_CONS * sizeof(pthread_t));
+    pthread_t *prod = malloc(Nbre_prod * sizeof(pthread_t));
+    pthread_t *cons = malloc(Nbre_cons * sizeof(pthread_t));
 
     pthread_mutex_init(&mutex, NULL);
     sem_init(&empty, 0, BUFFER_SIZE);
@@ -76,19 +76,19 @@ int main(int argc, char *argv[]) {
     struct timespec debut,fin;
     clock_gettime(CLOCK_MONOTONIC, &debut);
 
-    for (long i = 0; i < N_PROD; i++) {
+    for (long i = 0; i < Nbre_prod; i++) {
         pthread_create(&prod[i], NULL, producteur, (void*)i);
     }
 
-    for (long i = 0; i < N_CONS; i++) {
+    for (long i = 0; i < Nbre_cons; i++) {
         pthread_create(&cons[i], NULL, consommateur, (void*)i);
     }
 
-    for (int i = 0; i < N_PROD; i++) {
+    for (int i = 0; i < Nbre_prod; i++) {
         pthread_join(prod[i], NULL);
     }
 
-    for (int i = 0; i < N_CONS; i++) {
+    for (int i = 0; i < Nbre_cons; i++) {
         pthread_join(cons[i], NULL);
     }
 
@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
     free(prod);
     free(cons);
 
+    //on affiche le temps entre le début et la fin
     double temps = (fin.tv_sec - debut.tv_sec) + (fin.tv_nsec - debut.tv_nsec) / 1e9;
     printf("%.6f\n", temps);
 
